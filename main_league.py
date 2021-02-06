@@ -88,9 +88,9 @@ def main(include_user, render_option, plot_result):
   
   # if include_user flag is enabled, add User at last. 
   if include_user:
-    agents.append(User(name='you', 
-                       state_size=observation_size, 
-                       action_size=action_size))
+    agents.insert(0, User(name='you', 
+                          state_size=observation_size, 
+                          action_size=action_size))
   print('\nParticipating agents: {}\n{}'.format(len(agents), '\n'.join([a.name for a in agents])))
   
   # create Tournament instance. 
