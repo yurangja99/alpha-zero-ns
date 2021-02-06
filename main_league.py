@@ -149,6 +149,7 @@ def main(include_user, render_option, plot_result):
     plt.title('League Points')
     plt.xlabel('Version')
     plt.ylabel('Score')
+    plt.xticks(rotation=50)
     plt.grid(True)
     plt.legend()
     

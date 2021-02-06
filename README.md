@@ -72,6 +72,14 @@ Monte Carlo Tree Search 덕분에 상대가 3개의 연속된 돌을 두었을 �
 - red (myself) vs green (version 31): RED (VERSION 31) WON!
 ![green: myself, red: version 31](imgs/greenme_red31.gif)
 
+## 여러 버전들의 대국 결과
+1번째부터 31번째 모델 중 홀수 버전 16개를 선택하여 리그를 진행한 결과입니다. 
+각각 다른 모든 모델과 2판씩 대국했으며, 선턴으로 1판, 후턴으로 1판씩 대국했습니다. 
+아래의 점수 그래프를 보면, 대체로 높은 버전이 높은 점수를 얻는 우상향 그래프임을 알 수 있습니다. 
+그러나, 아직 학습이 완벽하지는 않아 더 학습하면 더 좋은 모델을 얻을 수 있을 것으로 예상합니다. 
+
+![league1](imgs/league1.png)
+![league2](imgs/league2.png)
 
 # Tech Stack
 - Windows 10
