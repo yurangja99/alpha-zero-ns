@@ -195,6 +195,7 @@ Monte Carlo Tree Search 덕분에 상대가 3개의 연속된 돌을 두었을 �
 - self.model_input: 실제로 에이전트의 모델에 들어갈 np array를 저장합니다. 
 - self.black_win: 해당 state에서 turn=0인 사용자가 이겼는지 알려 주는 bool 값입니다.
 - self.white_win: 해당 state에서 turn=1인 사용자가 이겼는지 알려 주는 bool 값입니다. 
+- self.draw: 해당 state에서 게임이 무승부로 종료되었는지 알려 주는 bool 값입니다. 
 - self.render(mode, logger): self.state를 시각화합니다. 
   - mode='rgb_array': self.state를 RGB 이미지로 반환합니다. (width, height, 3) 형태의 np.array를 반환해야 합니다. 
   - mode='log', logger={some_logger}: 주어진 logger에 self.state를 출력합니다. 출력 형태는 자유롭게 바꿀 수 있습니다. 
@@ -323,3 +324,13 @@ Model의 Optimizer를 SGD (Stochastic Gradient Descent) 로 변경하니, 아래
 
 # Contributors
 - yurangja99
+
+
+# Commit Notes
+## 2021.02.05 (#1 ~ #3)
+- first commit
+## 2021.02.07 (#4)
+- fix twelve shogi game. 
+- enable draw in connected four game. 
+- disable GPU memory limit and just enabled Memory Growth. 
+- fix config to make better results. 

@@ -17,8 +17,8 @@ gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
   try:
     tf.config.experimental.set_memory_growth(gpus[0], True)
-    tf.config.experimental.set_virtual_device_configuration(gpus[0],
-      [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=2048)])
+    #tf.config.experimental.set_virtual_device_configuration(gpus[0],
+    #  [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=2048)])
   except Exception:
     pass
 

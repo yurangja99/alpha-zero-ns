@@ -1,7 +1,7 @@
 # Self Play
-EPISODES = 30 #75 # used in main.py. set number of self-play episodes of Tournament
-MCTS_SIMS = 50 #100 # used in main.py. set number of MCTS simulation of Agent
-MEMORY_SIZE = 30000 #90000 # used in main.py. set capacity of the memory
+EPISODES = 75 #75 # used in main.py. set number of self-play episodes of Tournament
+MCTS_SIMS = 100 #100 # used in main.py. set number of MCTS simulation of Agent
+MEMORY_SIZE = 90000 #90000 # used in main.py. set capacity of the memory
 TURNS_UNTIL_TAU0 = 10 # used in main.py set Agent's threshold to act greedily
 CPUCT = 1 # used in main.py. set cpuct of Agent. affects ratio of Q and U in MCTS.move_to_leaf().
 EPSILON = 0.2 # used in MCTS, set epsilon if current node is root. (epsilon affects U) maybe exploration?

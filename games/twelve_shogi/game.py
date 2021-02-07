@@ -100,14 +100,65 @@ class GameState:
     Returns different results according to mode
       if mode == rgb_array, returns its state as RGB scale (R: opponent, G: agent, B: nothing)
       else if mode == 'log', returns its state as list with 'K', 'J', 'S', 'j', 'H', and '-'.
+      else if mode == 'terminal', prints its state as list with 'K', 'J', 'S', 'j', 'H', and '-'. 
       otherwise, plot it.
     '''
-    if mode == 'log':
+    if mode == 'log' or mode == 'terminal':
       # use logger to log state
-      piece = lambda x: 'O' if x[0] > 0 else ('X' if x[1] > 0 else '-')
-      for i in range(6):
-        logger.info([piece(self.state[i, j]) for j in range(7)])
-      logger.info('--------------------------------------------------------')
+      def piece(x):
+        '''
+        convert vector x to str
+
+        Parameters
+          x: np.array (10, )
+        '''
+        padding = ' '
+        if np.any(x[[0, 1, 2, 3, 4]] > 0):
+          # black piece
+          padding = ' '
+        elif np.any(x[[5, 6, 7, 8, 9]] > 0):
+          # white piece
+          padding = '_'
+        if np.any(x[[0, 5]] > 0):
+          # king piece
+          return padding + 'K' + padding
+        elif np.any(x[[1, 6]] > 0):
+          # jang piece
+          return padding + 'J' + padding
+        elif np.any(x[[2, 7]] > 0):
+          # sang piece
+          return padding + 'S' + padding
+        elif np.any(x[[3, 8]] > 0):
+          # ja piece (black, and white)
+          return padding + 'j' + padding
+        elif np.any(x[[4, 9]] > 0):
+          # hu piece (black, and white)
+          return padding + 'H' + padding
+        return padding + '-' + padding
+      def captured_pieces(x):
+        '''
+        convert captured pieces as str
+
+        Parameters
+          x: np.array of (4,)
+        '''
+        return 'K ' * x[0] + 'J ' * x[1] + 'S ' * x[2] + 'j ' * x[3]
+      if mode == 'log':
+        # first, render pieces on the table. 
+        for i in range(4):
+          logger.info([piece(pos) for pos in self.state[i, :, :10]])
+        # second, render captured pieces. 
+        logger.info('Player1(below)\'s Captured: ' + captured_pieces(self.state[0, 0, 10:14]))
+        logger.info('Player2(upper)\'s Captured: ' + captured_pieces(self.state[0, 0, 14:18]))
+        logger.info('--------------------------------------------------------')
+      else:
+        # first, render pieces on the table. 
+        for i in range(4):
+          print([piece(pos) for pos in self.state[i, :, :10]])
+        # second, render captured pieces. 
+        print('Player1(below)\'s Captured: ' + captured_pieces(self.state[0, 0, 10:14]))
+        print('Player2(upper)\'s Captured: ' + captured_pieces(self.state[0, 0, 14:18]))
+        print('--------------------------------------------------------')
     else:
       def piece(x):
         '''
@@ -152,25 +203,25 @@ class GameState:
         Parameters
           x: np.int32 (0.0 to 2.0)
           turn: 0 or 1
-          cap_type: str. one of 'king', 'jang', 'sang', or 'ja'. 
+          cap_type: int. one of 0 for 'king', 1 for 'jang', 2 for 'sang', and 3 for 'ja'. 
         '''
         piece_pixels = np.zeros((5, 5, 3), dtype=np.int32)
         if x > 0:
           # black or white
           piece_pixels[:, :, 1 - turn] = x * 127
-          if cap_type == 'king':
+          if cap_type == 0:
             # captured king
             piece_pixels[[0, 0, 0, 2, 2, 4, 4, 4], [0, 2, 4, 0, 4, 0, 2, 4], :] = 200
-          elif cap_type == 'jang':
+          elif cap_type == 1:
             # captured jang
             piece_pixels[[0, 2, 2, 4], [2, 0, 4, 2], :] = 200
-          elif cap_type == 'sang':
+          elif cap_type == 2:
             # captured sang
             piece_pixels[[0, 0, 4, 4], [0, 4, 0, 4], :] = 200
-          elif cap_type == 'ja' and turn == 0:
+          elif cap_type == 3 and turn == 0:
             # captured ja (black side)
             piece_pixels[0, 2, :] = 200
-          elif cap_type == 'ja' and turn == 1:
+          elif cap_type == 3 and turn == 1:
             # captured ja (white side)
             piece_pixels[4, 2, :] = 200
         return piece_pixels
@@ -178,8 +229,8 @@ class GameState:
       pixels = np.zeros((4 * 5 + 3, 7 * 5 + 6, 3), dtype=np.int32)
       # first, render pieces on the table. 
       for i in range(4):
-        pixels[i * 6 : (i + 1) * 6 - 1, 0:5, :] = captured(self.state[0, 0, 14 + i], 1, ['king', 'jang', 'sang', 'ja'][i])
-        pixels[i * 6 : (i + 1) * 6 - 1, 36:41, :] = captured(self.state[0, 0, 10 + i], 0, ['king', 'jang', 'sang', 'ja'][i])
+        pixels[i * 6 : (i + 1) * 6 - 1, 0:5, :] = captured(self.state[0, 0, 14 + i], 1, i)
+        pixels[i * 6 : (i + 1) * 6 - 1, 36:41, :] = captured(self.state[0, 0, 10 + i], 0, i)
         for j in range(3):
           pixels[i * 6 : (i + 1) * 6 - 1, (j + 2) * 6 : (j + 3) * 6 - 1, :] = piece(self.state[i, j, :10])
       # second, render captured pieces. 
@@ -190,7 +241,7 @@ class GameState:
         # plot state
         plt.imshow(pixels)
         plt.show(block=False)
-        plt.pause(0.001)
+        plt.pause(0.1)
 
   def __black_win(self):
     '''
@@ -244,10 +295,10 @@ class GameState:
         base_r = 3 - (action // 8) // 3
         base_c = 2 - (action // 8) % 3
         direction = (action % 8 + 4) % 8
-      print('\nfrom ({}, {}), direction {}'.format(base_r, base_c, direction))
+      #print('\nfrom ({}, {}), direction {}'.format(base_r, base_c, direction))
       # check whether the piece exists and belongs to self.turn
       my_pieces_on_base = np.where(self.state[base_r, base_c, self.turn * 5 : self.turn * 5 + 5] > 0)[0]
-      print('my pieces on base: {}'.format(my_pieces_on_base))
+      #print('my pieces on base: {}'.format(my_pieces_on_base))
       if len(my_pieces_on_base) != 1:
         # lose. no pieces belong to the player or invalid situation. 
         return self, -1, True, None
@@ -261,14 +312,14 @@ class GameState:
         return self, -1, True, None
       target_r = base_r + dr
       target_c = base_c + dc
-      print('target ({}, {})'.format(target_r, target_c))
+      #print('target ({}, {})'.format(target_r, target_c))
       if target_r < 0 or target_r > 3 or target_c < 0 or target_c > 2:
         # lose. move outside the boundary
         return self, -1, True, None
       my_pieces_on_target = np.where(self.state[target_r, target_c, self.turn * 5 : self.turn * 5 + 5] > 0)[0]
       op_pieces_on_target = np.where(self.state[target_r, target_c, (1 - self.turn) * 5 : (1 - self.turn) * 5 + 5] > 0)[0]
-      print('my pieces on target: {}'.format(my_pieces_on_target))
-      print('op pieces on target: {}'.format(op_pieces_on_target))
+      #print('my pieces on target: {}'.format(my_pieces_on_target))
+      #print('op pieces on target: {}'.format(op_pieces_on_target))
       if len(my_pieces_on_target) > 0:
         # lose. can't move to the place that my piece placed on. 
         return self, -1, True, None
@@ -280,7 +331,7 @@ class GameState:
         # capture pieces (should be one)
         for op_piece in op_pieces_on_target:
           next_board[target_r, target_c, (1 - self.turn) * 5 + op_piece] = 0
-          next_board[:, :, 10 + self.turn * 4 + op_piece] += 1
+          next_board[:, :, 10 + self.turn * 4 + min(op_piece, 3)] += 1 # min(op_piece, 3) changes hu to ja.
       next_board[base_r, base_c, self.turn * 5 + my_pieces_on_base[0]] = 0
       next_board[target_r, target_c, self.turn * 5 + my_pieces_on_base[0]] = 1
       
@@ -301,6 +352,9 @@ class GameState:
         return self, -1, True, None
       
       # check whether the new position is empty and not enemy's side
+      if np.any(self.state[target_r, target_c, :10] > 0):
+        # lose. can't drop at non-empty side. 
+        return self, -1, True, None
       if target_r == self.turn * 3:
         # lose. can't drop at opponent's side. 
         return self, -1, True, None

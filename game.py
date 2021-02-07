@@ -32,6 +32,7 @@ class GameState:
       self.model_input: np array. turn-considered state. (see __to_model_input() method.)
       self.black_win: whether black wins
       self.white_win: whether white wins
+      self.draw: whether draw
     '''
     self.state = state
     self.turn = turn
@@ -39,6 +40,7 @@ class GameState:
     self.model_input = self.__to_model_input()
     self.black_win = self.__black_win()
     self.white_win = self.__white_win()
+    self.draw = self.__draw()
   
   def __to_model_input(self):
     '''
@@ -150,6 +152,16 @@ class GameState:
            (r < 6 - 3 and c < 7 - 3 and np.trace(np.fliplr(self.state[r:r+4, c:c+4, 1])) == 4):
           return True
     return False
+  
+  def __draw(self):
+    '''
+    return whether draw situation occurred. 
+    In this game, draw occurred when all columns are full. 
+    '''
+    for a in range(7):
+      if self.__max_blank_row(self.state[:, a]) >= 0:
+        return False
+    return True
 
   def fliplr(self):
     '''
@@ -193,6 +205,9 @@ class GameState:
     # (user with the turn win)
     if next_state.black_win or next_state.white_win:
       return (next_state, -1, True, None)
+    # case draw.
+    if next_state.draw:
+      return (next_state, 0, True, None)
 
     # return new state with reward 0.0
     return (next_state, 0, False, None)
