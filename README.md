@@ -334,3 +334,8 @@ Model의 Optimizer를 SGD (Stochastic Gradient Descent) 로 변경하니, 아래
 - enable draw in connected four game. 
 - disable GPU memory limit and just enabled Memory Growth. 
 - fix config to make better results. 
+## 2021.02.18 (#5)
+- fix config.py
+- add skeleton code for custom games. 
+- add episodes parameter to main_league.py
+- model uses Adam instead of SGD. 

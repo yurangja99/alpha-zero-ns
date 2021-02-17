@@ -31,13 +31,14 @@ if gpus:
   except Exception:
     pass
 
-def main(include_user, render_option, plot_result):
+def main(episodes, include_user, render_option, plot_result):
   '''
   Play league for specific run number. 
   User can see model list, and select model numbers to participate. 
   The result will be plotted, and returned by numpy array. 
 
   Parameters
+    episodes: int. episodes of each tournaments. 
     include_user: bool. whether user participate in league or not. 
     render_option: str. rendering option: 'human', 'terminal', and None. 
     plot_result: bool. whether this function saves the figure of the result, or not. 
@@ -100,7 +101,7 @@ def main(include_user, render_option, plot_result):
   league = Tournament(env=env, 
                       agent1=agents[0], 
                       agent2=agents[1], 
-                      episodes=2, 
+                      episodes=episodes, 
                       logger=logger.league_logger, 
                       turns_until_tau0=0, 
                       memory=None, 
@@ -163,15 +164,17 @@ def main(include_user, render_option, plot_result):
 if __name__ == '__main__':
   # parse arguments
   parser = argparse.ArgumentParser(description='Alpha Zero Clone League')
+  parser.add_argument('--episodes', '-E', type=int, default=2, 
+    help='Set episodes of each tournaments. (should be even, but no errors when odd. )')
   parser.add_argument('--include-user', '-IU', action='store_true', 
     help='If enabled, include User (YOU) in the league. ')
-  parser.add_argument('--render-option', '-R', type=str, default='terminal', 
+  parser.add_argument('--render-option', '-R', type=str, default='none', 
     help='Set render option of the league. \'human\' for plotting, \
     \'terminal\' for terminal printing, and else for nothing. \
-    Default setting is \'terminal\'. ')
+    Default setting is \'none\'. ')
   parser.add_argument('--plot-result', '-P', action='store_true', 
     help='If enabled, save plotted img in run folder. ')
   args = parser.parse_args()
 
   # play league
-  main(args.include_user, args.render_option, args.plot_result)
+  main(args.episodes, args.include_user, args.render_option, args.plot_result)
