@@ -8,10 +8,10 @@ EPSILON = 0.2 # used in MCTS, set epsilon if current node is root. (epsilon affe
 ALPHA = 0.8 # used in MCTS, set nu distribution if current node is root. (nu affects U) maybe exploration?
 
 # Retraining Network
-BATCH_SIZE = 256 # used in main.py. set Agent.replay()'s epoch
+BATCH_SIZE = 1024 # used in main.py. set Agent.replay()'s epoch
 EPOCHS = 1 # used in main.py. set Agent.replay()'s epoch
 REG_CONST = 0.0001 # used in main.py. set NN model's reg_const (maybe U -> exploration?)
-LEARNING_RATE = 0.01 # used in main.py. set learning rate of NN model. 
+LEARNING_RATE = 0.1 # used in main.py. set learning rate of NN model. 
 BETA1 = 0.9  # used in model.py Adam Optimizer's momentum
 BETA2 = 0.999 # used in model.py Adam Optimizer's momentum
 TRAINING_LOOPS = 10 # used in main.py. set Agent.replay()'s iteration number.

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from keras.models import load_model, Model
 from keras.layers import Input, Dense, Conv2D, Flatten, BatchNormalization, Activation, LeakyReLU, add
-from keras.optimizers import SGD, Adam
+from keras.optimizers import SGD #, Adam
 from keras import regularizers
 from keras.utils import plot_model
 
@@ -230,7 +230,7 @@ class ResidualCNNManager(ModelManager):
     # compile and return model
     model = Model(inputs=[main_input], outputs=[value_head, policy_head])
     model.compile(loss={ 'value_head': 'mean_squared_error', 'policy_head': tf.nn.softmax_cross_entropy_with_logits }, 
-                  optimizer=Adam(learning_rate=self.learning_rate, beta_1=config.BETA1, beta_2=config.BETA2), 
+                  optimizer=SGD(learning_rate=self.learning_rate, momentum=config.BETA1), 
                   loss_weights={'value_head': 0.5, 'policy_head': 0.5})
     return model
   

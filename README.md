@@ -339,3 +339,6 @@ Model의 Optimizer를 SGD (Stochastic Gradient Descent) 로 변경하니, 아래
 - add skeleton code for custom games. 
 - add episodes parameter to main_league.py
 - model uses Adam instead of SGD. 
+## 2021/02/18 (#6)
+- back to SGD (Adam occurs overflow in exp() func)
+- batch size enhancement. 
